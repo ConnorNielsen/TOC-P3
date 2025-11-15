@@ -20,7 +20,7 @@ public class TMState {
         this.transTable = new Hashtable<>();
     }
 
-    public boolean addTransition(String destStateName, String onSymb, String writeSymb, String direction) {
+    public boolean addTransition(String onSymb, String destStateName, String writeSymb, String direction) {
         if (this.transTable.contains(onSymb)) {
             return false;
         }
