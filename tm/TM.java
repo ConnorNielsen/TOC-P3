@@ -18,15 +18,18 @@ public class TM {
             }
 
             //Read transitions -- next state, write symbol, move
-            for(int i = 0; i < (numStates * numSymb); i++) {
-                String current = scanner.nextLine();
+            for(int i = 0; i < ((numStates-1) * numSymb); i++) {
+                String current = scanner.next();
                 String[] parts = current.split(",");
                 statesList[i % numSymb].addTransition(String.valueOf(i % numStates), parts[0], parts[1], parts[2]);
             }
+            if (scanner.hasNext()) {
+                this.evalString = scanner.next();
+            } else {
+                this.evalString = "";
+            }
 
-            this.evalString = scanner.nextLine();
-
-            System.out.println("Evaluation string is: " + evalString);
+            System.out.println("Evaluation string is: " + this.evalString);
             System.out.println(Arrays.toString(statesList));
 
         } catch (Exception e) {

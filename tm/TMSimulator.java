@@ -7,7 +7,8 @@ public class TMSimulator {
         if (args.length != 1) {
             Usage();
         }
-        TM turingMachine = new TM(new File("../" + args[0]));
+        TM turingMachine = new TM(new File(args[0]));
+        System.err.println(turingMachine);
     }
 
     public static void Usage() {

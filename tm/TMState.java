@@ -11,9 +11,14 @@ public class TMState {
             this.direction = direction;
             this.destStateName = destStateName;
         }
+
+        @Override
+        public int hashCode() {
+            return Integer.valueOf(writeSymb) + Integer.valueOf(direction) + Integer.valueOf(destStateName);
+        }
     }
 
-    private Hashtable<String, Set<String>> transTable;
+    private Hashtable<String, DestinationSet> transTable;
     private String name;
     public TMState(String name) {
         this.name = name;
@@ -24,13 +29,13 @@ public class TMState {
         if (this.transTable.contains(onSymb)) {
             return false;
         }
-        
-        this.transTable.put(onSymb, Set.of(writeSymb, direction, destStateName));
+
+        this.transTable.put(onSymb, new DestinationSet(writeSymb, direction, destStateName));
 
         return true;
     }
 
-    public Set<String> getDestInfo(String onSymb) {
+    public DestinationSet getDestInfo(String onSymb) {
         return this.transTable.get(onSymb);
     }
 
