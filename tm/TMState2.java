@@ -3,13 +3,13 @@ package tm;
 import java.util.Hashtable;
 import java.util.Set;
 
-public class TMState {
+public class TMState2 {
     private class DestinationSet {
-        private int writeSymb;
+        private char writeSymb;
         private int destStateName;
         private boolean direction;
 
-        public DestinationSet(int writeSymb, boolean direction, int destStateName) {
+        public DestinationSet(char writeSymb, boolean direction, int destStateName) {
             this.writeSymb = writeSymb;
             this.direction = direction;
             this.destStateName = destStateName;
@@ -21,35 +21,33 @@ public class TMState {
         }
     }
 
-    private DestinationSet[] transTable;
+    private Hashtable<Character, DestinationSet> transTable;
     private int name;
     private DestinationSet currDestinationSet;
 
-    public TMState(int name, int numSymb) {
+    public TMState2(int name) {
         this.name = name;
-        this.transTable = new DestinationSet[numSymb];
+        this.transTable = new Hashtable<>();
         this.currDestinationSet = null;
     }
 
-    public boolean addTransition(int onSymb, int destStateName, int writeSymb, boolean direction) {
+    public boolean addTransition(char onSymb, int destStateName, char writeSymb, boolean direction) {
+        if (this.transTable.contains(onSymb)) {
+            return false;
+        }
         // System.out.println("State: " + this.name);
         // System.out.println("onSymb: " + onSymb);
         // System.out.println("destStateName: " + destStateName);
         // System.out.println("writeSymb: " + writeSymb);
         // System.out.println("direction: " + direction);
         // System.out.println();
-        this.transTable[onSymb] = new DestinationSet(writeSymb, direction, destStateName);
+        this.transTable.put(onSymb, new DestinationSet(writeSymb, direction, destStateName));
 
         return true;
     }
 
     public boolean updateDestInfo(char onSymb) {
-        this.currDestinationSet = this.transTable[(int)(onSymb-'0')];
-        return this.currDestinationSet != null;
-    }
-
-    public boolean updateDestInfo(int onSymb) {
-        this.currDestinationSet = this.transTable[onSymb];
+        this.currDestinationSet = this.transTable.get(onSymb);
         return this.currDestinationSet != null;
     }
 
@@ -57,11 +55,7 @@ public class TMState {
         return this.currDestinationSet.destStateName;
     }
 
-    // public char getWriteSymbAlt() {
-    //     return this.currDestinationSet.writeSymb;
-    // }
-
-    public int getWriteSymb() {
+    public char getWriteSymb() {
         return this.currDestinationSet.writeSymb;
     }
 

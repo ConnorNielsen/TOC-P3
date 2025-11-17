@@ -3,20 +3,19 @@ import java.io.File;
 
 import java.util.Scanner;
 
-public class TM {
-    private TMState[] statesList;
-    private char[] evalCharArray;
+public class TM2 {
+    private TMStateLogic states;
     private boolean debug;
     private LinkedListInt list;
     private int numStates;
 
-    public TM(File TMFile, boolean debug) {
+    public TM2(File TMFile, boolean debug) {
         this.debug = debug;
         try (Scanner scanner = new Scanner(TMFile)) {
             this.numStates = scanner.nextInt();
             int numSymb = scanner.nextInt() + 1 ; //tape alphabet; + 1 is to account for blank character
 
-            this.statesList = new TMState[numStates];
+            this.states = new TMStateLogic(numStates, numSymb);
             // for (int i = 0; i < numStates; i++) {
             //     statesList[i] = new TMState(String.valueOf(i));
             // }
@@ -28,16 +27,12 @@ public class TM {
                 char[] parts = current.toCharArray();
                 int currIndex = i/numSymb;
                 // System.out.println(currIndex);
-                if (i%numSymb==0) {
-                    statesList[currIndex] = new TMState(currIndex, numSymb);
-                }
                 // System.out.println((char)('0'+currIndex));
                 // System.out.println((int)(parts[0]-'0'));
                 // System.out.println(parts[2]);
                 // System.out.println(parts[4] == 'R');
-                statesList[currIndex].addTransition((i%numSymb), (int)(parts[0]-'0'), (int)(parts[2]-'0'), (parts[4]=='R'));
+                states.addTransition(currIndex, (i%numSymb), (int)(parts[0]-'0'), (int)(parts[2]-'0'), (parts[4]=='R'));
             }
-            statesList[numStates-1] = new TMState(numStates-1, numSymb);
             // System.out.println("Here");
             // if (scanner.hasNext()) {
             //     String next = scanner.next();
@@ -67,34 +62,24 @@ public class TM {
     }
 
     public void eval() {
-        TMState curr = statesList[0];
-        boolean running = true;
+        //TMState curr = statesList[0];
+        //boolean running = true;
         //int count = 0;
-        while (running) { //&& count<10) {
-            if (curr.getName() == this.numStates-1) {
-                running = false;
-                continue;
-            }
-
-            //System.out.println(list.getCurrNodeData());
-            if (!curr.updateDestInfo(list.getCurrNodeData())) {
-                running = false;
-                continue;
-            }
-
-            // System.out.println("List: "+list);
-            // System.out.println("State: " + curr.getName());
-            // System.out.println("Destination: " + curr.getDest());
-            // System.out.println("writeSymb: " + curr.getWriteSymb());
-            // System.out.println("Direction: "+ curr.getDirection());
-            // System.out.println();
-
-            list.updateCurrNode(curr.getWriteSymb(), curr.getDirection());
-            curr = statesList[curr.getDest()];
+        while (states.is_running()) { //&& count<10) {
+            System.out.println("List: "+list);
+            System.out.println("State: " + states.currState);
+            System.out.println("Destination: " + states.array[states.currState][list.getCurrNodeData()].destStateName);
+            System.out.println("writeSymb: " + states.getWriteSymb());
+            System.out.println("Direction: "+ states.getDirection());
+            System.out.println();
+            states.update(list.getCurrNodeData());
+            list.updateCurrNode(states.getWriteSymb(), states.getDirection());
+            states.update(list.getCurrNodeData());
+            
+            //curr = statesList[curr.getDest()];
             //count++;
         }
         System.out.println(list);
-        //list.print();
         if (debug) {
             System.out.println("output length: " + list.size());
             System.out.println("sum of symbols: " + list.sum());
