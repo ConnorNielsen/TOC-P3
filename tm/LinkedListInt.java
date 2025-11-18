@@ -1,10 +1,10 @@
 package tm;
 
 public class LinkedListInt {
-    private class Node {
-        private Node next,prev;
-        private Integer data;
-        private boolean isSent;
+    public class Node {
+        public Node next,prev;
+        public Integer data;
+        public boolean isSent;
 
         public Node(Integer data, Node prev, Node next) {
             this.data = data;
@@ -26,9 +26,9 @@ public class LinkedListInt {
         }
     }
 
-    private int size;
-    private Node sentinel;
-    private Node currNode;
+    public int size;
+    public Node sentinel;
+    public Node currNode;
 
     public LinkedListInt() {
         sentinel = new Node(null, null, null);

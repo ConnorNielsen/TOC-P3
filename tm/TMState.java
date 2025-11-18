@@ -4,10 +4,10 @@ import java.util.Hashtable;
 import java.util.Set;
 
 public class TMState {
-    private class DestinationSet {
-        private int writeSymb;
-        private int destStateName;
-        private boolean direction;
+    public class DestinationSet {
+        public int writeSymb;
+        public int destStateName;
+        public boolean direction;
 
         public DestinationSet(int writeSymb, boolean direction, int destStateName) {
             this.writeSymb = writeSymb;
@@ -21,9 +21,9 @@ public class TMState {
         }
     }
 
-    private DestinationSet[] transTable;
-    private int name;
-    private DestinationSet currDestinationSet;
+    public DestinationSet[] transTable;
+    public int name;
+    public DestinationSet currDestinationSet;
 
     public TMState(int name, int numSymb) {
         this.name = name;
