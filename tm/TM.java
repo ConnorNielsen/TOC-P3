@@ -93,10 +93,10 @@ public class TM {
             list[listIndex] = curr.writeSymb;
             //System.out.println(" "+ list[listIndex]);
             listIndex += (curr.direction)? 1:-1;
-            if (finalIndex<listIndex) {
+            if (curr.direction && finalIndex<listIndex) {
                 finalIndex = listIndex;
             }
-            if (startIndex>listIndex) {
+            if (!curr.direction && startIndex>listIndex) {
                 startIndex = listIndex;
             }
             if (curr.destStateName == this.numStates-1) {
@@ -121,10 +121,14 @@ public class TM {
             //count++;
         }
         //System.out.println(list);
-        for (int i = startIndex; i<=finalIndex; i++) {
-            System.out.print(list[i]);
+        // for (int i = startIndex; i<=finalIndex; i++) {
+        //     System.out.print(list[i]);
+        // }
+        StringBuilder sb = new StringBuilder();
+        for (int i = startIndex; i<=finalIndex;i++) {
+            sb.append(list[i]);
         }
-        System.out.println();
+        System.out.println(sb.toString());
         if (debug) {
             //System.out.println("output length: " + list.size());
             //System.out.println("sum of symbols: " + list.sum());
