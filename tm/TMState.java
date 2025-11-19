@@ -25,33 +25,22 @@ public class TMState {
         }
     }
 
-    private Hashtable<Character, DestinationSet> transTable;
+    public DestinationSet[] transArray;
     private DestinationSet currDestinationSet;
     private char name;
-    public TMState(char name) {
+    public TMState(char name, int numSymb) {
         this.name = name;
-        this.transTable = new Hashtable<>();
+        this.transArray = new DestinationSet[numSymb];
         this.currDestinationSet = null;
     }
 
-    public boolean addTransition(char onSymb, char destStateName, char writeSymb, boolean direction) {
-        if (this.transTable.contains(onSymb)) {
-            return false;
-        }
-
-        this.transTable.put(onSymb, new DestinationSet(writeSymb, destStateName, direction));
+    public boolean addTransition(int onSymb, char destStateName, char writeSymb, boolean direction) {
+        this.transArray[onSymb] = new DestinationSet(writeSymb, destStateName, direction);
         return true;
     }
 
-    // public DestinationSet getDestInfo(char onSymb) {
-    //     return this.transTable.get(onSymb);
-    // }
-
     public boolean updateCurrDestination(char onSymb) {
-        if (!this.transTable.contains(onSymb)) {
-            return false;
-        }
-        this.currDestinationSet = this.transTable.get(onSymb);
+        this.currDestinationSet = this.transArray[(int)(onSymb-'0')];
         return true;
     }
 

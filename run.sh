@@ -5,4 +5,4 @@ cd ../
 javac tm/TMState.java
 javac tm/TM.java
 javac tm/TMSimulator.java
-time java tm.TMSimulator file0.txt
+time java tm.TMSimulator file5.txt

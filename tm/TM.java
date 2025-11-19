@@ -24,10 +24,16 @@ public class TM {
                 String current = scanner.next();
                 //String[] parts = current.split(",");
                 if (i%numSymb==0) {
-                    statesList[i/numSymb] = new TMState((char)('0' + (i/numSymb)));
+                    //System.out.println(i/numSymb);
+                    this.statesList[i/numSymb] = new TMState((char)('0' + (i/numSymb)), numSymb);
                 }
                 //statesList[i % numSymb].addTransition((char)('0'+(i % numStates)), parts[0], parts[1], parts[2]);
-                statesList[i/numSymb].addTransition((char)('0' + (i%numStates)), current.charAt(0), current.charAt(2), current.charAt(4)=='R');
+                // System.out.println(i/numSymb);
+                // System.out.println((char)('0' + (i%numStates)));
+                // System.out.println(current.charAt(0));
+                // System.out.println(current.charAt(2));
+                // System.out.println(current.charAt(4)=='R');
+                this.statesList[i/numSymb].addTransition((i%numSymb), current.charAt(0), current.charAt(2), current.charAt(4)=='R');
             }
             list = new LinkedList();
             if (scanner.hasNext()) {
@@ -37,8 +43,9 @@ public class TM {
                 this.evalString = "";
             }
 
-            System.out.println("Evaluation string is: " + this.evalString);
-            System.out.println(Arrays.toString(statesList));
+            // System.out.println("Evaluation string is: " + this.evalString);
+            // System.out.println(Arrays.toString(statesList));
+            eval();
 
         } catch (Exception e) {
             System.out.println(e);
@@ -50,13 +57,18 @@ public class TM {
         TMState curr = this.statesList[0];
         while (running) {
             curr.updateCurrDestination(list.getCurrNodeData());
-            list.updateCurrNode(curr.getWriteSymb(), curr.getDirection());
-            if (curr.getDest() == this.statesList[this.numStates-1].getName()) {
+            if ((int)(curr.getDest()-'0') == this.numStates-1) {
                 running = false;
-                continue;
+                break;
             }
-            curr = this.statesList[curr.getDest()];
+            list.updateCurrNode(curr.getWriteSymb(), curr.getDirection());
+            curr = this.statesList[(int)(curr.getDest()-'0')];
         }
         System.out.println(list);
     }
 }
+
+
+/*
+ * Use an array of a ton of bytes
+ */
