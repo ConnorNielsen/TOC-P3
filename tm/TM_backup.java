@@ -3,7 +3,7 @@ import java.io.File;
 
 import java.util.Scanner;
 
-public class TM {
+public class TM_backup {
     public class DestinationSet {
         public int writeSymb;
         public int destStateName;
@@ -24,10 +24,10 @@ public class TM {
     private DestinationSet[][] states;
     private DestinationSet[] startState;
     private boolean debug;
-    private int[] list;
-    private int numStates, listIndex, startIndex, finalIndex;
+    private LinkedListInt list;
+    private int numStates;
 
-    public TM(File TMFile, boolean debug) {
+    public TM_backup(File TMFile, boolean debug) {
         this.debug = debug;
         try (Scanner scanner = new Scanner(TMFile)) {
             this.numStates = scanner.nextInt();
@@ -42,29 +42,14 @@ public class TM {
                 //String[] parts = current.split(",");
                 char[] parts = current.toCharArray();
                 int currIndex = i/numSymb;
-                // System.out.print("start: " + currIndex + " dest: " + ((int)(parts[0]-'0')));
-                // System.out.print(" writeSymb: " + ((int)(parts[2]-'0')) + " onSymb: " + i%numSymb);
-                // System.out.println();
                 //states.addTransition(currIndex, (i%numSymb), (int)(parts[0]-'0'), (int)(parts[2]-'0'), (parts[4]=='R'));
                 this.states[currIndex][i%numSymb] = new DestinationSet((int)(parts[0]-'0'), (int)(parts[2]-'0'), (parts[4]=='R'));
             }
+
+            list = new LinkedListInt();
             if (scanner.hasNext()) {
                 String next = scanner.next();
-                list = new int[next.length()*2];
-                char[] array = next.toCharArray();
-                listIndex = startIndex = finalIndex = next.length()/2;
-                for (int i = 0; i<listIndex; i++) {
-                    list[i] = 0;
-                }
-                for (int i = 0; i<next.length(); i++) {
-                    list[i+listIndex] = array[i]-'0';
-                }
-                for (int i = next.length()+listIndex; i<list.length; i++) {
-                    list[i] = 0;
-                }
-            } else {
-                list = new int[10000000];
-                listIndex = startIndex = finalIndex = 5000000;
+                list = new LinkedListInt(next.toCharArray());
             }
             this.startState = this.states[0];
             eval();
@@ -81,36 +66,14 @@ public class TM {
         //TMState curr = statesList[0];
         boolean running = true;
         //int count = 0;
-        while (running) {// && count < 1000) {
-            //count++;
-            // DestinationSet curr = this.startState[list.getCurrNodeData()];
-            DestinationSet curr = this.startState[list[listIndex]];
-            //System.out.print(curr.destStateName + " ");
+        while (running) { //&& count<10) {
 
-            //list.updateCurrNode(curr.writeSymb,curr.direction);
-            // System.out.print(list[listIndex]);
-            //System.out.print(""+ list[listIndex]);
-            list[listIndex] = curr.writeSymb;
-            //System.out.println(" "+ list[listIndex]);
-            listIndex += (curr.direction)? 1:-1;
-            if (finalIndex<listIndex) {
-                finalIndex = listIndex;
-            }
-            if (startIndex>listIndex) {
-                startIndex = listIndex;
-            }
+            DestinationSet curr = this.startState[list.getCurrNodeData()];
             if (curr.destStateName == this.numStates-1) {
                 running = false;
                 continue;
             }
-
-            if (listIndex<0) {
-                listIndex = this.list.length/2;
-                this.list=extend(this.list, true);
-            } else if (listIndex==this.list.length) {
-                listIndex += this.list.length/2;
-                this.list=extend(this.list, false);
-            }
+            list.updateCurrNode(curr.writeSymb,curr.direction);
             this.startState = this.states[curr.destStateName];
 
             // states.update(list.getCurrNodeData());
@@ -120,14 +83,10 @@ public class TM {
             //curr = statesList[curr.getDest()];
             //count++;
         }
-        //System.out.println(list);
-        for (int i = startIndex; i<=finalIndex; i++) {
-            System.out.print(list[i]);
-        }
-        System.out.println();
+        System.out.println(list);
         if (debug) {
-            //System.out.println("output length: " + list.size());
-            //System.out.println("sum of symbols: " + list.sum());
+            System.out.println("output length: " + list.size());
+            System.out.println("sum of symbols: " + list.sum());
         }
     }
 
@@ -194,27 +153,4 @@ public class TM {
         
     //     return newEvalCharArray;
     // }
-    
-    public int[] extend(int[] array, boolean negative) {
-        int[] newArray = new int[array.length * 2];
-        if (negative) {
-            for (int i = 0; i < array.length; i++) {
-                newArray[i] = 0;
-            }
-            for (int i = array.length; i < array.length*2; i++) {
-                // System.out.println(i);
-                newArray[i] = array[i-array.length];
-                // System.out.println(newEvalCharArray[i]);
-            }
-        } else {
-            for (int i = 0; i < array.length; i++) {
-                newArray[i] = array[i];
-            }
-            for (int i = array.length; i < newArray.length; i++) {
-                newArray[i] = 0;
-            }
-        }
-        
-        return newArray;
-    }
 }
