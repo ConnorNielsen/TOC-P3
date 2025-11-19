@@ -1,2 +1,2 @@
 #!/bin/bash
-time java tm.TMSimulator file0.txt
+time java tm.TMSimulator file5.txt
