@@ -42,6 +42,7 @@ public class LinkedList {
         for (int i = 0; i < array.length; i++) {
             append(array[i]);
         }
+        this.currNode = sentinel.next;
     }
 
     public Character getCurrNodeData() {
