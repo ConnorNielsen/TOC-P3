@@ -1,6 +1,5 @@
 package tm;
 import java.io.File;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class TM {
@@ -57,11 +56,11 @@ public class TM {
         TMState curr = this.statesList[0];
         while (running) {
             curr.updateCurrDestination(list.getCurrNodeData());
+            list.updateCurrNode(curr.getWriteSymb(), curr.getDirection());
             if ((int)(curr.getDest()-'0') == this.numStates-1) {
                 running = false;
                 break;
             }
-            list.updateCurrNode(curr.getWriteSymb(), curr.getDirection());
             curr = this.statesList[(int)(curr.getDest()-'0')];
         }
         System.out.println(list);
