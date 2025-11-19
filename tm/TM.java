@@ -7,10 +7,11 @@ public class TM {
     private String evalString;
     private LinkedList list;
     private TMState[] statesList;
+    private int numStates;
 
     public TM(File TMFile) {
         try (Scanner scanner = new Scanner(TMFile)) {
-            int numStates = scanner.nextInt();
+            this.numStates = scanner.nextInt();
             int numSymb = scanner.nextInt() + 1 ; //tape alphabet; + 1 is to account for blank character
 
             this.statesList = new TMState[numStates];
@@ -23,10 +24,10 @@ public class TM {
                 String current = scanner.next();
                 //String[] parts = current.split(",");
                 if (i%numSymb==0) {
-                    statesList[i%numSymb] = new TMState(String.valueOf(i));
+                    statesList[i/numSymb] = new TMState((char)('0' + (i/numSymb)));
                 }
                 //statesList[i % numSymb].addTransition((char)('0'+(i % numStates)), parts[0], parts[1], parts[2]);
-                statesList[i%numSymb].addTransition((char)('0' + (i%numStates)), current.charAt(0), current.charAt(2), current.charAt(4)=='R');
+                statesList[i/numSymb].addTransition((char)('0' + (i%numStates)), current.charAt(0), current.charAt(2), current.charAt(4)=='R');
             }
             list = new LinkedList();
             if (scanner.hasNext()) {
@@ -46,8 +47,16 @@ public class TM {
 
     public void eval() {
         boolean running = true;
+        TMState curr = this.statesList[0];
         while (running) {
-            running = false;
+            curr.updateCurrDestination(list.getCurrNodeData());
+            list.updateCurrNode(curr.getWriteSymb(), curr.getDirection());
+            if (curr.getDest() == this.statesList[this.numStates-1].getName()) {
+                running = false;
+                continue;
+            }
+            curr = this.statesList[curr.getDest()];
         }
+        System.out.println(list);
     }
 }

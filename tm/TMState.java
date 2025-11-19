@@ -26,10 +26,12 @@ public class TMState {
     }
 
     private Hashtable<Character, DestinationSet> transTable;
-    private String name;
-    public TMState(String name) {
+    private DestinationSet currDestinationSet;
+    private char name;
+    public TMState(char name) {
         this.name = name;
         this.transTable = new Hashtable<>();
+        this.currDestinationSet = null;
     }
 
     public boolean addTransition(char onSymb, char destStateName, char writeSymb, boolean direction) {
@@ -41,11 +43,31 @@ public class TMState {
         return true;
     }
 
-    public DestinationSet getDestInfo(char onSymb) {
-        return this.transTable.get(onSymb);
+    // public DestinationSet getDestInfo(char onSymb) {
+    //     return this.transTable.get(onSymb);
+    // }
+
+    public boolean updateCurrDestination(char onSymb) {
+        if (!this.transTable.contains(onSymb)) {
+            return false;
+        }
+        this.currDestinationSet = this.transTable.get(onSymb);
+        return true;
     }
 
-    public String getName() {
+    public char getDest() {
+        return this.currDestinationSet.destStateName;
+    }
+
+    public char getWriteSymb() {
+        return this.currDestinationSet.writeSymb;
+    }
+
+    public boolean getDirection() {
+        return this.currDestinationSet.direction;
+    }
+
+    public char getName() {
         return this.name;
     }
 
