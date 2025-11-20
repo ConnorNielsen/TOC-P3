@@ -4,14 +4,24 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.Scanner;
 
-public class TM {
+public class TMAlt {
     private TMState[] statesList;
     private char[] evalCharArray;
     private boolean debug;
     private LinkedListInt list;
     private int numStates;
 
-    public TM(File TMFile, boolean debug) {
+
+            // char[] buf = new char[size*6];
+            // br.read(buf);
+            // for (int i = 0; i < size; i++) {
+            //     int bufIndex = i*6;
+            //     this.destStateName[i] = (int)(buf[bufIndex]-'0');
+            //     this.writeSymb[i] = (int)(buf[bufIndex+2]-'0');
+            //     this.directions[i] = (buf[bufIndex+4]=='R');
+            // }
+
+    public TMAlt(File TMFile) {
         this.debug = debug;
         try (BufferedReader bw = new BufferedReader(new FileReader(TMFile))) {
             this.numStates = Integer.valueOf(bw.readLine());
