@@ -8,8 +8,6 @@ public class TMSimulator {
             Usage();
         }
         TM turingMachine = new TM(new File(args[0]), false);
-        // System.out.println(turingMachine.eval());
-        //turingMachine.eval();
     }
 
     public static void Usage() {

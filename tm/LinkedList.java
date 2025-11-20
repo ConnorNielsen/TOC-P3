@@ -45,7 +45,6 @@ public class LinkedList {
     }
 
     public Character getCurrNodeData() {
-        //System.out.println(this.currNode);
         return this.currNode.data;
     }
 

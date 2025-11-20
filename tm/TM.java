@@ -23,51 +23,85 @@ public class TM {
 
     private DestinationSet[][] states;
     private DestinationSet[] startState;
+    private int[] writeSymb, destStateName;
+    private boolean[] directions;
     private boolean debug;
     private int[] list;
-    private int numStates, listIndex, startIndex, finalIndex;
+    private int numStates, numSymb, listIndex, startIndex, finalIndex;
 
     public TM(File TMFile, boolean debug) {
         this.debug = debug;
         try (Scanner scanner = new Scanner(TMFile)) {
             this.numStates = scanner.nextInt();
-            int numSymb = scanner.nextInt() + 1 ; //tape alphabet; + 1 is to account for blank character
+            this.numSymb = scanner.nextInt() + 1 ; //tape alphabet; + 1 is to account for blank character
 
             //this.states = new TMStateLogic(numStates, numSymb);
-            this.states = new DestinationSet[numStates-1][numSymb];
+            //this.states = new DestinationSet[numStates-1][numSymb];
+            int size = (numStates-1) * numSymb;
+            this.writeSymb = new int[size];
+            this.destStateName = new int[size];
+            this.directions = new boolean[size];
 
             //Read transitions -- next state, write symbol, move
-            for(int i = 0; i < ((numStates-1) * numSymb); i++) {
+            for(int i = 0; i < size; i++) {
                 String current = scanner.next();
-                //String[] parts = current.split(",");
-                char[] parts = current.toCharArray();
-                int currIndex = i/numSymb;
-                // System.out.print("start: " + currIndex + " dest: " + ((int)(parts[0]-'0')));
-                // System.out.print(" writeSymb: " + ((int)(parts[2]-'0')) + " onSymb: " + i%numSymb);
-                // System.out.println();
-                //states.addTransition(currIndex, (i%numSymb), (int)(parts[0]-'0'), (int)(parts[2]-'0'), (parts[4]=='R'));
-                this.states[currIndex][i%numSymb] = new DestinationSet((int)(parts[0]-'0'), (int)(parts[2]-'0'), (parts[4]=='R'));
+                this.destStateName[i] = (int)(current.charAt(0)-'0');
+                this.writeSymb[i] = (int)(current.charAt(2)-'0');
+                this.directions[i] = (boolean)(current.charAt(4)=='R');
+
+                // System.out.println("w: " + this.writeSymb[i] + " d: " + this.destStateName[i] + " dir: " + this.directions[i]);
+
+                // String current = scanner.next();
+                // //String[] parts = current.split(",");
+                // char[] parts = current.toCharArray();
+                // int currIndex = i/numSymb;
+                // // System.out.print("start: " + currIndex + " dest: " + ((int)(parts[0]-'0')));
+                // // System.out.print(" writeSymb: " + ((int)(parts[2]-'0')) + " onSymb: " + i%numSymb);
+                // // System.out.println();
+                // //states.addTransition(currIndex, (i%numSymb), (int)(parts[0]-'0'), (int)(parts[2]-'0'), (parts[4]=='R'));
+                // this.states[currIndex][i%numSymb] = new DestinationSet((int)(parts[0]-'0'), (int)(parts[2]-'0'), (parts[4]=='R'));
             }
+
+            list = new int[10000000];
+            listIndex = startIndex = finalIndex = 5000000;
             if (scanner.hasNext()) {
                 String next = scanner.next();
-                list = new int[next.length()*2];
-                char[] array = next.toCharArray();
-                listIndex = startIndex = finalIndex = next.length()/2;
-                for (int i = 0; i<listIndex; i++) {
+                listIndex = startIndex = (list.length-next.length())/2;
+                finalIndex = (listIndex + next.length());
+                for (int i = 0; i < listIndex; i++) {
                     list[i] = 0;
                 }
-                for (int i = 0; i<next.length(); i++) {
-                    list[i+listIndex] = array[i]-'0';
+                int index = 0;
+                for (int i = listIndex; i < finalIndex; i++) {
+                    list[i] = next.charAt(index);
+                    index++;
                 }
-                for (int i = next.length()+listIndex; i<list.length; i++) {
+                for (int i = finalIndex; i < list.length; i++) {
                     list[i] = 0;
                 }
-            } else {
-                list = new int[10000000];
-                listIndex = startIndex = finalIndex = 5000000;
             }
-            this.startState = this.states[0];
             eval();
+
+            // if (scanner.hasNext()) {
+            //     String next = scanner.next();
+            //     list = new int[next.length()*2];
+            //     char[] array = next.toCharArray();
+            //     listIndex = startIndex = finalIndex = next.length()/2;
+            //     for (int i = 0; i<listIndex; i++) {
+            //         list[i] = 0;
+            //     }
+            //     for (int i = 0; i<next.length(); i++) {
+            //         list[i+listIndex] = array[i]-'0';
+            //     }
+            //     for (int i = next.length()+listIndex; i<list.length; i++) {
+            //         list[i] = 0;
+            //     }
+            // } else {
+            //     list = new int[10000000];
+            //     listIndex = startIndex = finalIndex = 5000000;
+            // }
+            // this.startState = this.states[0];
+            // eval();
 
             //System.out.println("Evaluation string is: " + new String(this.evalCharArray));
             //System.out.println(Arrays.toString(statesList));
@@ -78,6 +112,45 @@ public class TM {
     }
 
     public void eval() {
+        int state = 0;
+        int onSymb = this.list[this.listIndex];
+        int i = 0;
+        while (true) {
+            i = (state*numSymb) + onSymb;
+            state = this.destStateName[i];
+            list[listIndex] = this.writeSymb[i];
+            if (this.directions[i]) {
+                listIndex++;
+                if (listIndex>finalIndex) {
+                    finalIndex = listIndex;
+                }
+            } else {
+                listIndex--;
+                if (listIndex<startIndex) {
+                    startIndex = listIndex;
+                }
+            }
+            if (state == numStates-1) {
+                break;
+            }
+            onSymb = list[listIndex];
+        }
+
+        // Convert list to string
+        char[] output = new char[finalIndex-startIndex+1];
+        i = 0;
+        int sum = 0;
+        for (;startIndex<=finalIndex;startIndex++) {
+            sum += list[startIndex];
+            output[i] = (char)(list[startIndex]+'0');
+            i++;
+        }
+        System.out.println(String.valueOf(output));
+        System.out.println("output length: " + output.length);
+        System.out.println("sum of symbols: " + sum);
+    }
+
+    public void eval_alt() {
         //TMState curr = statesList[0];
         boolean running = true;
         //int count = 0;
