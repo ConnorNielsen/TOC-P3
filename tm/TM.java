@@ -7,6 +7,7 @@ import java.io.FileReader;
  * Turing machine class that builds a machine defined from a file.
  * Also evaluates the provided string in the same file.
  * This implementation does not support S calls for the direction.
+ * @author Connor Nielsen & Phuc Le
  */
 public class TM {
     /* 

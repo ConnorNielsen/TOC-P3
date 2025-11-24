@@ -4,6 +4,7 @@ import java.io.File;
 
 /**
  * Driver class for the Turing Machine simulation.
+ * @author Connor Nielsen & Phuc Le
  */
 public class TMSimulator {
     /**
@@ -22,6 +23,6 @@ public class TMSimulator {
      * correctly.
      */
     public static void Usage() {
-        System.out.println("Useage: java tm.TMSimulator <filename.txt>");
+        System.out.println("Usage: java tm.TMSimulator <filename.txt>");
     }
 }
