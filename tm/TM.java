@@ -135,10 +135,6 @@ public class TM {
         }
 
         int index = this.startIndex;
-        // System.out.println(this.head);
-        // System.out.println(i + " " + end);
-        // System.out.println(this.startIndex + " " + this.finalIndex);
-        // System.out.println();
 
         for (;i<=end;i++) {
             newTape[index] = this.tape[i];
