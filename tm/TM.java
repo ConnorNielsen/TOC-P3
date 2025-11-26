@@ -86,20 +86,20 @@ public class TM {
             tape[head] = this.writeSymb[i];
             
             if (this.directions[i]) {
+                if (head==tape.length-1) {
+                    extend(false);
+                }
                 head++;
                 if (head>finalIndex) {
                     finalIndex = head;
                 }
-                if (head>tape.length) {
-                    extend(tape, false);
-                }
             } else {
+                if (head==0) {
+                    extend(true);
+                }
                 head--;
                 if (head<startIndex) {
                     startIndex = head;
-                }
-                if (head<0) {
-                    extend(tape, true);
                 }
             }
             if (state == numStates-1) {
@@ -120,29 +120,30 @@ public class TM {
     }
     
     /**
-     * Private extension function that takes an array and doubles the size and recenters the original array.
-     * @param array The array to increase the size of and recenter
+     * Private extension function that doubles the size of the tape and recenters it.
      * @param negative A boolean indicator telling which side of the array was reached
-     * @return A new array that is twice the size of the original array and has the data centered.
      */
-    private byte[] extend(byte[] array, boolean negative) { //TODO remove negative stuff
-        byte[] newArray = new byte[array.length * 2];
+    private void extend(boolean negative) {
+        byte[] newTape = new byte[this.tape.length*2];
+        int i = this.startIndex;
+        int end = this.finalIndex;
+
         if (negative) {
-            // for (int i = 0; i < array.length; i++) {
-            //     newArray[i] = 0;
-            // }
-            for (int i = array.length; i < array.length*2; i++) {
-                newArray[i] = array[i-array.length];
-            }
-        } else {
-            for (int i = 0; i < array.length; i++) {
-                newArray[i] = array[i];
-            }
-            // for (int i = array.length; i < newArray.length; i++) {
-            //     newArray[i] = 0;
-            // }
+            this.startIndex += this.tape.length;
+            this.finalIndex += this.tape.length;
+            this.head += this.tape.length;
         }
-        
-        return newArray;
+
+        int index = this.startIndex;
+        // System.out.println(this.head);
+        // System.out.println(i + " " + end);
+        // System.out.println(this.startIndex + " " + this.finalIndex);
+        // System.out.println();
+
+        for (;i<=end;i++) {
+            newTape[index] = this.tape[i];
+            index++;
+        }
+        this.tape = newTape;
     }
 }
