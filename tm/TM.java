@@ -40,9 +40,16 @@ public class TM {
             //Read transitions -- next state, write symbol, move
             for(int i = 0; i < size; i++) {
                 String current = br.readLine();
-                this.destStateName[i] = (byte)(current.charAt(0)-offset); // Convert the char into bytes
-                this.writeSymb[i] = (byte)(current.charAt(2)-offset); // Convert the char into bytes
-                this.directions[i] = (current.charAt(4)=='R'); // Convert the L/R indicator into boolean logic
+                System.out.println(current);
+                String[] parts = current.split(",");
+                // this.destStateName[i] = (int)(current.charAt(0)-offset); // Convert the char into bytes
+                // this.writeSymb[i] = (byte)(current.charAt(2)-offset); // Convert the char into bytes
+                // this.directions[i] = (current.charAt(4)=='R'); // Convert the L/R indicator into boolean logic
+                this.destStateName[i] = Integer.valueOf(parts[0]);
+                this.writeSymb[i] = Byte.valueOf(parts[1]);
+                this.directions[i] = (parts[2].equals("R"));
+                // System.out.println(parts[2]);
+                // System.out.println("dest: " + this.destStateName[i] + " wSymb: " + this.writeSymb[i] + " dir: " + this.directions[i]);
             }
 
             // Allocating a large array is worth the hit since it hopefully ensures no extensions need to be made
@@ -76,7 +83,7 @@ public class TM {
             i = (state*numSymb) + onSymb;
             state = this.destStateName[i];
             tape[head] = this.writeSymb[i];
-            
+
             if (this.directions[i]) {
                 if (head==tape.length-1) {
                     extend(false);
