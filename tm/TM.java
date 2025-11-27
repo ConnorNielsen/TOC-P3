@@ -33,17 +33,9 @@ public class TM {
 
             int size = (numStates-1) * numSymb; // Calculates the total number of lines defining the transitions for the machine
 
-            /* Fixed sized arrays can be precompiled, making the machine run slightly faster.
-             * Only if the machine has more than 256 transitions does the array need to be extended.
-             */
-            this.writeSymb = new byte[256];
-            this.destStateName = new int[256];
-            this.directions = new boolean[256];
-            if (size>256){
-                this.writeSymb = new byte[size];
-                this.destStateName = new int[size];
-                this.directions = new boolean[size];
-            }
+            this.writeSymb = new byte[size];
+            this.destStateName = new int[size];
+            this.directions = new boolean[size];
 
             //Read transitions -- next state, write symbol, move
             for(int i = 0; i < size; i++) {
@@ -110,13 +102,16 @@ public class TM {
         // Convert list to string
         char[] output = new char[finalIndex-startIndex+1];
         i = 0;
+        // int sum = 0;
 
         // Converts only the cells in the tape that were actually reached during the evaluation.
         for (;startIndex<=finalIndex;startIndex++) {
+            // sum += tape[startIndex];
             output[i] = (char)(tape[startIndex]+offset);
             i++;
         }
         System.out.println(String.valueOf(output));
+        // System.out.println("Sum of tape: " + sum);
     }
     
     /**
